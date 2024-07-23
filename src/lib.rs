@@ -123,13 +123,13 @@ macro_rules! define_async_fn_traits {
     };
     ([$($FNTYPE:ident)?][$($I:literal)*] $N:literal $($J:literal)*) => {
         paste!{
-            #[doc = "A synonym for future-returning `Fn"$($FNTYPE)?"`-bounds with "$N" arguments"]
+            #[doc = "A synonym for future-returning `Fn"$($FNTYPE)?"`-bounds with "[<$N>]" arguments"]
             #[doc = ""]
             #[doc = "The bound"]
             #[doc = "```no_run"]
             #[doc = "# use async_fn_traits::*;"]
             #[doc = "# fn _f<F: ?Sized, R, "$([<Arg $I>])", "*">() where"]
-            #[doc = "F: AsyncFn"$($FNTYPE)?$N"<"$([<Arg $I>]", ")*"Output = R>,"]
+            #[doc = "F: AsyncFn"$($FNTYPE)?[<$N>]"<"$([<Arg $I>]", ")*"Output = R>,"]
             #[doc = "# {}"]
             #[doc = "```"]
             #[doc = "is equivalent to something like"]
@@ -144,9 +144,9 @@ macro_rules! define_async_fn_traits {
                 : [<Fn $($FNTYPE)?>]($([<Arg $I>]),*) -> <Self as [<AsyncFn $($FNTYPE)? $N>]<$([<Arg $I>]),*>>::OutputFuture
             {
                 #[allow(missing_docs)]
-                type OutputFuture: Future<Output = <Self as [<AsyncFn $($FNTYPE)? $N>]<$([<Arg $I>]),*>>::Output>;
+                type OutputFuture: Future<Output = <Self as [<AsyncFn $($FNTYPE)? $N>]<$([<Arg $I>]),*>>::OutputType>;
                 #[allow(missing_docs)]
-                type Output;
+                type OutputType;
             }
             impl<F: ?Sized, Fut, $([<Arg $I>]),*> [<AsyncFn $($FNTYPE)? $N>]<$([<Arg $I>]),*> for F
             where
@@ -154,7 +154,7 @@ macro_rules! define_async_fn_traits {
                 Fut: Future,
             {
                 type OutputFuture = Fut;
-                type Output = Fut::Output;
+                type OutputType = Fut::Output;
             }
         }
         define_async_fn_traits!{
